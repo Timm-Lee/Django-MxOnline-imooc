@@ -2,8 +2,28 @@
 
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.backends import ModelBackend
+
+from .models import UserProfile
 
 
+# 自定义 authenticate 实现邮箱登录
+class CustomBackend(ModelBackend):
+    def authenticate(self, username=None, password=None, **kwargs):
+        try:
+            # 查找用户在 model 中是否存在，用 get 可以确保只有一个该用户
+            user = UserProfile.objects.get(username=username)
+            # 传入的密码，与 model 中的对比，只能使用 check_password 方法
+            if user.check_password(password):
+                return user
+        except Exception as e:
+            return None
+
+
+
+
+
+# 登录逻辑
 def user_login(request):
     # POST 要大写
     if request.method == 'POST':
