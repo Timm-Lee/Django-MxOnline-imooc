@@ -253,10 +253,18 @@ def login(request):
 from django.contrib.auth import authenticate
 
 
-user = authenticate(user_name, pass_word)
+user = authenticate(username=user_name, password=pass_word)
 ```
 
 anthenticate 传入两个参数 username和密码，如果认证成功会返回user的model的对象，如果失败返回 None。
+
+这里 authenticate 参数名称必须写明 username= , password = 
+
+```python
+user = authenticate(username=user_name, password=pass_word)
+```
+
+
 
 
 
@@ -284,7 +292,25 @@ anthenticate 传入两个参数 username和密码，如果认证成功会返回u
 
 
 
+### 修正两个 bug: authenticate参数 与 login 函数名
 
+ authenticate 参数名称必须写明 username= , password = 
+
+```python
+user = authenticate(username=user_name, password=pass_word)
+```
+
+views 的 login 函数名称不能和 django 的 login 函数重名
+
+```python
+def user_login(request):
+```
+
+urls
+
+```python
+url(r'^login/$', user_login, name='login'),
+```
 
 
 
