@@ -3,6 +3,7 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.backends import ModelBackend
+from django.db.models import Q
 
 from .models import UserProfile
 
@@ -12,7 +13,7 @@ class CustomBackend(ModelBackend):
     def authenticate(self, username=None, password=None, **kwargs):
         try:
             # 查找用户在 model 中是否存在，用 get 可以确保只有一个该用户
-            user = UserProfile.objects.get(username=username)
+            user = UserProfile.objects.get(Q(username=username)|Q(email=username))
             # 传入的密码，与 model 中的对比，只能使用 check_password 方法
             if user.check_password(password):
                 return user
