@@ -45,4 +45,7 @@ urlpatterns = [
     # 处理 media 信息，用于图片获取
     url(r'^media/(?P<path>.*)', serve, {"document_root":MEDIA_ROOT}),
 
+    # 用户咨询
+    url(r'^/', include())
+
 ]
