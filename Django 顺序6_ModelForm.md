@@ -42,7 +42,7 @@ ModelForm 写成以下形式。其中 `model=UserAsk` 表示继承自 `UserAsk` 
 ```python
 from operation.models import UserAsk
 
-class AnotherUserForm(forms.ModelForm):
+class AskUserForm(forms.ModelForm):
     class Meta:
         model = UserAsk
         fields = ['name', 'mobile', 'course_name']
@@ -51,6 +51,25 @@ class AnotherUserForm(forms.ModelForm):
 
 
 ## urls 
+
+首先在主 urls 下
+
+```python
+urlpatterns = [
+    # 课程机构 url 配置
+    url(r'^org/', include('organization.urls', namespace="org")),
+]
+```
+
+在机构下面的 urls 中
+
+```python
+from .views import OrgView
+urlpatterns = [
+    # 课程机构列表页
+    url(r'list/$', OrgView.as_view(), name="org_list"),
+]
+```
 
 
 

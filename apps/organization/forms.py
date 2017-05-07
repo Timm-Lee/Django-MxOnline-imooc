@@ -7,7 +7,7 @@ from operation.models import UserAsk
 
 
 # 用户提交咨询表单的验证
-class AnotherUserForm(forms.ModelForm):
+class UserAskForm(forms.ModelForm):
     class Meta:
         model = UserAsk
         fields = ['name', 'mobile', 'course_name']

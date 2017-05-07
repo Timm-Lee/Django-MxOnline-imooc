@@ -8,7 +8,6 @@ from MxOnline.settings import MEDIA_ROOT
 import xadmin
 
 from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView
-from organization.views import OrgView
 
 
 urlpatterns = [
@@ -39,13 +38,10 @@ urlpatterns = [
     # 点击找回密码链接
     url(r'^modify_pwd/$', ModifyPwdView.as_view(), name='modify_pwd'),
 
-    # 课程机构首页
-    url(r'^org_list/$', OrgView.as_view(), name='org_list'),
-
     # 处理 media 信息，用于图片获取
     url(r'^media/(?P<path>.*)', serve, {"document_root":MEDIA_ROOT}),
 
-    # 用户咨询
-    url(r'^/', include())
+    # 课程机构 url 配置
+    url(r'^org/', include('organization.urls', namespace="org")),
 
 ]
