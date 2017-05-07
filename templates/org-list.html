@@ -46,7 +46,7 @@
             </ul>
           </div>
 
-          {% for org in all_orgs %}
+          {% for org in all_orgs.object_list %}
             <dl class="des difdes">
             <dt>
               <a href="/org_home/">
@@ -130,7 +130,7 @@
       <div class="head">授课机构排名</div>
       {% for org in hot_orgs %}
         <dl class="des">
-          <dt class="num fl">{{ forloop.counter }}</dt>
+          <dt class="num fl">{{ forloop.counte0 }}</dt>
           <dd>
             <a href="/company/2/"><h1>{{ org.name }}</h1></a>
             <p>{{ org.address }}</p>

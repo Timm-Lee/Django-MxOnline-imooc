@@ -32,16 +32,11 @@ class CourseOrg(models.Model):
     city = models.ForeignKey(CityDict, verbose_name='所在城市')
     add_time = models.DateTimeField(default=datetime.now, verbose_name='添加时间')
     students = models.IntegerField(default=0, verbose_name='学习人数')
+    course_nums = models.IntegerField(default=0, verbose_name='课程数')
 
     class Meta:
         verbose_name = '课程机构'
         verbose_name_plural = verbose_name
-
-    def get_teacher_nums(self):
-        return self.teacher_set.all().count()
-
-    def course_nums(self):
-        return self.course_set.all().count()
 
     def __str__(self):
         return self.name
