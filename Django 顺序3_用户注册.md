@@ -203,9 +203,113 @@ class RegisterView(View):
 
 
 
+## 发送注册邮件
+
+### 发送邮件逻辑
+
+在 apps 目录下建立 utils package 目录（里面带 `__init__.py`），并在里面建立 email_send.py。
+
+首先，需要把发送给用户的注册邮件信息保存在数据库，当用户点击邮件注册链接之后，需要在数据核实是否存在这些信息，存在才能激活用户。否则报错不存在该用户。
+
+```python
+from users.models import EmailVerifyRecord
+
+def send_register_email(email, type=0):
+    email_record = EmailVerifyRecord()
+```
 
 
 
+### 生成随机字符串
+
+```python
+# -*- coding:utf-8 -*-
+from users.models import EmailVerifyRecord
+from uuid import uuid4
+
+def send_register_email(email, type=0):
+    email_record = EmailVerifyRecord()
+    code = random_str()
+
+def random_str():
+    # 用 uuid.uuid4() 生成 36 位的随机uuid，再用 str() 转化成字符串
+    return str(uuid4())
+```
+
+
+
+### 保存发送给用户的邮件关键信息
+
+放入实例化的 model 中，用于用户点击邮件链接激活时核实信息验证。激活码、邮箱名、发送类型。
+
+```python
+def send_register_email(email, send_type='register'):
+    #...
+    # 用户注册邮件中的信息，赋值到 model 实例中
+    email_record.code = code
+    email_record.email = email
+    email_record.send_type = send_type
+    email_record.save()
+```
+
+
+
+### 激活邮件的内容编写
+
+```python
+def send_register_email(email, send_type='register'):
+    #...
+    # 发送的邮件内容逻辑
+    email_title = ""
+    email_body = ""
+
+    # 注册类邮件内容
+    if send_type == "register":
+        email_title = "慕学在线网注册激活链接"
+        email_body = "请点击下面的链接激活你的账号：http://127.0.0.1:8000/active/{0}".format(code)
+```
+
+
+
+### 发送邮件函数
+
+在 settings 中设定发送邮件参数
+
+```python
+EMAIL_HOST = 'smtp.sina.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'timm_lee@sina.com'
+EMAIL_HOST_PASSWORD = 'lkj;lkhkjg'
+EMAIL_USE_TLS = True
+EMAIL_FROM = 'timm_lee@sina.com'
+```
+
+Django 自带发送邮件函数 send_mail()
+
+```python
+from django.core.mail import send_mail
+
+send_mail(subject, message, from_email, recipient_list,
+              fail_silently=False, auth_user=None, auth_password=None,
+              connection=None, html_message=None)
+```
+
+* subject 是主题
+* message 是邮件内容，就是body
+* from_email 是 settings 中设置的发件人 EMAIL_FROM
+* recipient_list 必须是一个 list，是收人人的列表。
+
+所以发送函数设置，邮件发送函数成功发送邮件以后会返回值。
+
+```python
+        send_status = send_mail(email_title, email_body, EMAIL_FROM, [email])
+        if send_status:
+            pass
+```
+
+
+
+### 激活链接处理
 
 
 

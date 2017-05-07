@@ -151,12 +151,13 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-
 EMAIL_HOST = 'smtp.sina.com'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = 'timm_lee@sina.com'
 EMAIL_HOST_PASSWORD = 'admin123'
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = False
+# 如果是 qq 邮箱需要用 True
+# EMAIL_USE_TLS = True
 EMAIL_FROM = 'timm_lee@sina.com'
 
 
