@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 
 import xadmin
 
-from users.views import user_login
+from users.views import LoginView
 
 
 urlpatterns = [
@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
 
     # 用户登录页面
-    url(r'^login/$', user_login, name='login'),
+    url(r'^login/$', LoginView.as_view(), name='login'),
 
     # 用户登录post
 ]

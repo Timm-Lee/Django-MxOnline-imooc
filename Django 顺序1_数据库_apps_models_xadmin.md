@@ -1,4 +1,11 @@
-# Django 顺序
+# Django 顺序1：数据库, apps, models, xadmin
+
+本节：
+
+* 建立数据连接
+* 搭建 apps 结构
+* 建立 models
+* 实现 xadmin 后台
 
 
 
@@ -165,152 +172,6 @@ STATICFILES_DIRS = [
 
 
 
-
-## 用户登录逻辑
-
-### index
-
-把 index.html 放入 templates 目录中。
-
-配置 urls
-
-```python
-#...
-from django.views.generic import TemplateView
-
-urlpatterns = [
-	#...
-    url(r'^$', TemplateView.as_view(template_name='index.html'), name='index')
-]
-```
-
-
-
-#### 处理模板及静态文件：
-
-1、引入静态文件
-
-```html
-{% load staticfiles %}
-```
-
-2、模板中引用
-
-```python
-src="{% static 'images/top_down.png' %}"
-```
-
-
-
-#### 登录逻辑处理
-
-urls
-
-```python
-# -*- coding:utf-8 -*-
-
-from users.views import login
-
-
-urlpatterns = [
-    #...
-
-    # 用户登录页面
-    url(r'^login/$', login, name='login'),  
-]
-```
-
-
-
-users.views
-
-```python
-# coding:utf-8
-
-from django.shortcuts import render
-def login(request):
-    # POST 要大写
-    if request.method == 'POST':
-        pass
-    elif request.method == 'GET':
-        return render(request, 'index.html', {})
-```
-
-
-
-#### django 从 request.POST 中获取用户名与密码
-
-```python
-		user_name = request.POST.get('username', '')
-        pass_word = request.POST.get('password', '')
-```
-
-
-
-#### 认证方法 authenticate
-
-```python
-from django.contrib.auth import authenticate
-
-
-user = authenticate(username=user_name, password=pass_word)
-```
-
-anthenticate 传入两个参数 username和密码，如果认证成功会返回user的model的对象，如果失败返回 None。
-
-这里 authenticate 参数名称必须写明 username= , password = 
-
-```python
-user = authenticate(username=user_name, password=pass_word)
-```
-
-
-
-
-
-判断用户认证成功后，调用login，传入 request, user两个参数。跳转到首页。
-
-```python
-        if user is not None:
-            login(request, user)
-            return render(request, "index.html")
-```
-
-
-
-### 模板中判断是否登录 request.user.is_authenticated
-
-用于修改首页修改右上角的头
-
-```python
-            {% if request.user.is_authenticated %}
-                <!--登录后跳转-->
-        	{% else %}
-                <!--登录前-->
-            {% endif %}
-```
-
-
-
-### 修正两个 bug: authenticate参数 与 login 函数名
-
- authenticate 参数名称必须写明 username= , password = 
-
-```python
-user = authenticate(username=user_name, password=pass_word)
-```
-
-views 的 login 函数名称不能和 django 的 login 函数重名
-
-```python
-def user_login(request):
-```
-
-urls
-
-```python
-url(r'^login/$', user_login, name='login'),
-```
 
 
 
