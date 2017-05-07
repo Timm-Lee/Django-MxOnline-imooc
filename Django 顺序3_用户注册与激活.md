@@ -1,4 +1,4 @@
-# Django 顺序3：用户注册
+# Django 顺序3：用户注册与激活
 
 
 
@@ -309,11 +309,194 @@ send_mail(subject, message, from_email, recipient_list,
 
 
 
-### 激活链接处理
+### users.views.py 引入发送邮件函数
+
+这里的 user_name 接收用户的注册邮箱信息。成功去登录页面，失败则返回登录页面。
+
+```python
+from utils.email_send import send_register_email
+
+class RegisterView(View):
+    def post(self, request):
+        register_form = RegisterForm(request.POST)
+        if register_form.is_valid():
+            user_name = request.POST.get('email', '')
+        	#...
+            send_register_email(user_name, "register")
+            return render(request, "login.html")
+        else:
+            return render(request, "register.html")
+```
 
 
 
+### 注册表单验证向模板返回信息
 
+错误信息的返回类似于用户注册部分。
+
+而这里有个关键是如果客户输入错误，则还是把刚才的 email 填入新的注册表单中。使用了 `{{ register_form.email.value }}` 值。密码也是把值也填进去。
+
+```html
+<input type="text" id="id_email" name="email" value="{{ register_form.email.value }}">
+```
+
+
+
+## 用户激活
+
+### 将注册用户设置为“未激活”
+
+在保存注册用户的时候，先把客户是否激活设置为 False
+
+```python
+# 用户注册
+class RegisterView(View):
+    def post(self, request):
+        register_form = RegisterForm(request.POST)
+        if register_form.is_valid():
+            #...
+            user_profile.is_active = False
+```
+
+
+
+### 激活链接设置
+
+关键点是提取 url 中的变量，url 中变量的设置是 
+
+`(?P<变量名>变量的正则表达式)`
+
+比如名为 active_code 的变量，正则是所有的字符（.*），可以写成
+
+`(?P<active_code>.*)`
+
+放在active链接下面就是：
+
+```python
+url(r'^active/(?P<active_code>.*)/$', ),
+```
+
+
+
+### 激活 view 接收激活码
+
+首先要接收到激活链接中的参数 active_code
+
+```python
+# 用户激活链接逻辑
+class ActiveUserView(View):
+    def get(self, request, active_code):
+        pass
+```
+
+完整 url 是
+
+```python
+    url(r'^active/(?P<active_code>.*)/$', ActiveUserView.as_view(), name='user_active'),
+```
+
+当用户输入以下 url 地址的时候，可以在 views 中得到激活码。
+
+```python
+http://127.0.0.1:8000/active/142ed43a-1f3d-428c-94d2-599027bb3032/
+```
+
+
+
+### 激活逻辑
+
+首先，根据激活码，从邮件验证 model 中筛选是否存在激活码的发送激活码记录。
+
+如果存在发送激活码记录，则取出该记录。
+
+然后，把发送激活码记录中 email 取出来。
+
+再根据该 email 去用户注册信息中获取记录。
+
+将用户的激活状态改为已激活，并保存。
+
+```python
+# 用户激活链接逻辑
+class ActiveUserView(View):
+    def get(self, request, active_code):
+        all_records = EmailVerifyRecord.objects.filter(code=active_code)
+        if all_records:
+            for record in all_records:
+                email = record.email
+                user = UserProfile.objects.get(email=email)
+                user.is_active = True
+                user.save()
+        return render(request, "login.html")
+```
+
+
+
+### 完善用户登录逻辑（增加激活判断）
+
+用户未激活则报错。
+
+```python
+class LoginView(View):
+    def post(self, request):
+        login_form = LoginForm(request.POST)
+        if login_form.is_valid():
+            #...
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return render(request, "index.html")
+                else:
+                    return render(request, "login.html", {"msg": "用户未激活"})
+```
+
+
+
+### 完善注册逻辑（增加判断用户email是否已经注册）
+
+```python
+# 用户注册
+class RegisterView(View):
+    def post(self, request):
+        register_form = RegisterForm(request.POST)
+        if register_form.is_valid():
+            user_name = request.POST.get('email', '')
+            if UserProfile.objects.filter(email=user_name):
+                return render(request, "login.html", {"msg": "用户已经存在", "register_form": register_form})
+```
+
+如果注册过报错，而且把注册的 form 传回，一是保证有验证码，二是回填数据。
+
+
+
+### 完善激活逻辑（增加用户不存在判断分支）
+
+新建链接失效的页面：active_fail.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>链接失效</title>
+</head>
+<body>
+<p>链接失效</p>
+</body>
+</html>
+```
+
+如果激活时，用户不存在则调整失效页面。
+
+```python
+# 用户激活链接逻辑
+class ActiveUserView(View):
+    def get(self, request, active_code):
+        all_records = EmailVerifyRecord.objects.filter(code=active_code)
+        if all_records:
+            #...
+        else:
+            return render(request, "active_fail.html")
+```
 
 
 

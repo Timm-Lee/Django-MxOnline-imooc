@@ -31,5 +31,5 @@ def send_register_email(email, send_type='register'):
             pass
 
 def random_str():
-    # 用 uuid.uuid4() 生成 36 位的随机uuid，再用 str() 转化成字符串
-    return str(uuid4())
+    # 用 uuid.uuid4() 生成 36 位的随机uuid，再用 str() 转化成字符串，只取前 16 位
+    return str(uuid4())[:16]

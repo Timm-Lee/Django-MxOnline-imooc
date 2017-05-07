@@ -9,3 +9,5 @@
 *.pyc
 
 *.pyc
+
+.idea/workspace.xml
