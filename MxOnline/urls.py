@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.views.generic import TemplateView
 
 import xadmin
@@ -20,5 +20,9 @@ urlpatterns = [
 
     # 用户注册
     url(r'^register/$', RegisterView.as_view(), name='register'),
+
+    # 验证码图片的路由
+    url(r'^captcha/', include('captcha.urls')),
+
 
 ]
