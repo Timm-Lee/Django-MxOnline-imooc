@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 
 import xadmin
 
-from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView
+from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView
 
 
 urlpatterns = [
@@ -29,5 +29,12 @@ urlpatterns = [
 
     # 找回密码页面
     url(r'^forget/$', ForgetPwdView.as_view(), name='forget_pwd'),
+
+    # 点击找回密码链接
+    url(r'^reset/(?P<active_code>.*)/$', ResetView.as_view(), name='rest_pwd'),
+
+# 点击找回密码链接
+    url(r'^modify_pwd/$', ModifyPwdView.as_view(), name='modify_pwd'),
+
 
 ]
