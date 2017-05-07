@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 
 import xadmin
 
-from users.views import LoginView
+from users.views import LoginView, RegisterView
 
 
 urlpatterns = [
@@ -18,5 +18,7 @@ urlpatterns = [
     # 用户登录页面
     url(r'^login/$', LoginView.as_view(), name='login'),
 
-    # 用户登录post
+    # 用户注册
+    url(r'^register/$', RegisterView.as_view(), name='register'),
+
 ]

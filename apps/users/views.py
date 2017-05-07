@@ -42,4 +42,8 @@ class LoginView(View):
             return render(request, "login.html", {"login_form":login_form})
 
 
+# 用户登录
+class RegisterView(View):
+    def get(self, request):
+        return render(request, "register.html")
 
