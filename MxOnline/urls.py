@@ -2,10 +2,13 @@
 
 from django.conf.urls import url, include
 from django.views.generic import TemplateView
+from django.views.static import serve
+from MxOnline.settings import MEDIA_ROOT
 
 import xadmin
 
 from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView
+from organization.views import OrgView
 
 
 urlpatterns = [
@@ -33,8 +36,13 @@ urlpatterns = [
     # 点击找回密码链接
     url(r'^reset/(?P<active_code>.*)/$', ResetView.as_view(), name='rest_pwd'),
 
-# 点击找回密码链接
+    # 点击找回密码链接
     url(r'^modify_pwd/$', ModifyPwdView.as_view(), name='modify_pwd'),
 
+    # 课程机构首页
+    url(r'^org_list/$', OrgView.as_view(), name='org_list'),
+
+    # 处理 media 信息，用于图片获取
+    url(r'^media/(?P<path>.*)', serve, {"document_root":MEDIA_ROOT}),
 
 ]

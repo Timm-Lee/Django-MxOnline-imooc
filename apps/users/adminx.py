@@ -13,7 +13,7 @@ class BaseSetting():
     # 可以使用主题
     enable_themes = True
     # 使用bootswatch提供的主题
-    use_bootswatch = True
+    use_bootswatch = False
 
 
 class GlobalSettings():
