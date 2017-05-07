@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 
 import xadmin
 
-from users.views import LoginView, RegisterView, ActiveUserView
+from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView
 
 
 urlpatterns = [
@@ -26,5 +26,8 @@ urlpatterns = [
 
     # 用户注册：激活链接
     url(r'^active/(?P<active_code>.*)/$', ActiveUserView.as_view(), name='user_active'),
+
+    # 找回密码页面
+    url(r'^forget/$', ForgetPwdView.as_view(), name='forget_pwd'),
 
 ]

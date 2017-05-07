@@ -8,7 +8,7 @@ from django.views.generic.base import View
 from django.contrib.auth.hashers import make_password
 
 from .models import UserProfile, EmailVerifyRecord
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ForgetForm
 from utils.email_send import send_register_email
 
 
@@ -89,4 +89,11 @@ class ActiveUserView(View):
             return render(request, "login.html")
         else:
             return render(request, "active_fail.html")
+
+
+# 找回密码逻辑
+class ForgetPwdView(View):
+    def get(self, request):
+        forget_form = ForgetForm()
+        return render(request, "forgetpwd.html", {"forget_form":forget_form})
 
