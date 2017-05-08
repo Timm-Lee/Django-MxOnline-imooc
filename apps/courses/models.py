@@ -10,9 +10,9 @@ from organization.models import CourseOrg, Teacher
 
 class Course(models.Model):
     course_org = models.ForeignKey(CourseOrg, verbose_name='课程机构', null=True, blank=True)
+    teacher = models.ForeignKey(Teacher, verbose_name='讲师', null=True, blank=True)
     name = models.CharField(max_length=52, verbose_name='课程名字')
     desc =  models.CharField(max_length=300, verbose_name='课程描述')
-    teacher = models.ForeignKey(Teacher, verbose_name='讲师', null=True, blank=True)
     detail = models.TextField(verbose_name='课程详情')
     degree = models.CharField(choices=(('cj', '初级'), ('zj', '中级'), ('gj', '高级')), max_length=2, verbose_name='难度')
     learn_times = models.IntegerField(default=0, verbose_name='学习时长(分钟数)')
@@ -43,6 +43,10 @@ class Course(models.Model):
     def get_learn_users(self):
         return self.usercourse_set.all()[:5]
 
+    def get_course_lesson(self):
+        # 获取课程章节
+        return self.lesson_set.all()
+
     def __str__(self):
         return self.name
 
@@ -58,6 +62,7 @@ class Lesson(models.Model):
         verbose_name_plural = verbose_name
 
     def get_lesson_video(self):
+        # 获取课程的视频
         return self.video_set.all()
 
     def __str__(self):
