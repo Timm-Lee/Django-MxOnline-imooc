@@ -27,13 +27,16 @@ class UserProfile(AbstractUser):
 class EmailVerifyRecord(models.Model):
     code = models.CharField(max_length=20, verbose_name='验证码')
     email = models.EmailField(max_length=50, verbose_name='邮箱')
-    send_type = models.CharField(max_length=18, choices=(('register', '邮箱'), ('forget', '修改密码'), ('update_email', '修改邮箱')),
+    send_type = models.CharField(max_length=18, choices=(('register', '注册'), ('forget', '找回密码'), ('update_email', '修改邮箱')),
                                  verbose_name='验证码类型')
     send_time = models.DateField(default=datetime.now, verbose_name='发送时间')
 
     class Meta:
         verbose_name = '邮箱验证码'
         verbose_name_plural = '邮箱验证码'
+
+    def __str__(self):
+        return self.code
 
 
 class Banner(models.Model):
