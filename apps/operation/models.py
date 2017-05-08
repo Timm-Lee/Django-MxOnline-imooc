@@ -61,7 +61,6 @@ class UserMessage(models.Model):
         verbose_name_plural = verbose_name
 
 
-# CourseComments 和 UserCourse 字段差不多，可以使用 UserCourse 继承 CourseComments
 class UserCourse(models.Model):
     user = models.ForeignKey(UserProfile, verbose_name='用户')
     course = models.ForeignKey(Course, verbose_name='课程')

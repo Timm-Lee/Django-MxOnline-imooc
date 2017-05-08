@@ -5,7 +5,7 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 
 from .models import Course, CourseResource
-from operation.models import UserFavorite, CourseComments
+from operation.models import UserFavorite, CourseComments, UserCourse
 
 
 class CourseListView(View):
@@ -87,12 +87,35 @@ class CourseInfoView(View):
     """
 
     def get(self, request, course_id):
+            # 获取 url 参数确定课程
         course = Course.objects.get(id=int(course_id))
+
+            # 解决问题：学过这门课程的用户，还学过其他什么课程
+            # UserCourse 根据课程的 id 筛选出所有的记录。
+            # 通过这个记录可以得到所有学过这门的 user
+        user_courses = UserCourse.objects.filter(course=course)
+
+            # 获得了所有学过这门课的 user 的 id
+        user_ids = [user_course.user.id for user_course in user_courses]
+
+            # 要了解学过这门课的学生，还学过什么课程
+            # 还是回到 UserCourse 表，用刚才获得的用户 id 去获取所有的课程
+            # user_id （user 外键，取 id 用 user_id
+            # user_id__in （双下划线）表示去查找数组中的内容
+        all_user_courses = UserCourse.objects.filter(user_id__in=user_ids)
+
+            # 取出所有课程 id
+        course_ids = [user_course.course.id for user_course in all_user_courses]
+
+            # 查询学过这门的课用户们，还学过什么课
+        relate_courses = Course.objects.filter(id__in=course_ids).order_by("-click_nums")[:5]
+
         course_resources = CourseResource.objects.filter(course=course)
 
         return render(request, "course-video.html", {
             'course': course,
-            'course_resources': course_resources
+            'course_resources': course_resources,
+            'relate_courses': relate_courses,
         })
 
 
