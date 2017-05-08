@@ -49,13 +49,13 @@
           {% for org in all_orgs.object_list %}
             <dl class="des difdes">
             <dt>
-              <a href="/org_home/">
+              <a href="{% url 'org:org_home' org.id %}">
                 <img width="200" height="120" class="scrollLoading" src="{{ MEDIA_URL }}{{ org.image }}"/>
               </a>
             </dt>
             <dd>
               <div class="clearfix">
-                <a href="/org:org_home/">
+                <a href="{% url 'org:org_home' org.id %}">
                   <h1>{{ org.name }}</h1>
                   <div class="pic fl">
                     <img src="{% static 'images/authentication.png' %}"/>
@@ -144,13 +144,13 @@
 {% endblock %}
 {% block custom_js %}
 <script>
-  {% comment %}$(function () {
+  $(function () {
     $('#jsStayBtn').on('click', function () {
       $.ajax({
         cache: false,
         type: "POST",
         dataType: "json",
-        url: "{% url '#' %}",
+        url: "{% url 'org:add_ask' %}",
         //表单提交可以用 serialize 方法把 csrf token 一块序列化过来
         data: $('#jsStayForm').serialize(),
         async: true,
@@ -168,6 +168,6 @@
         }
       });
     });
-  }){% endcomment %}
+  })
 </script>
 {% endblock %}

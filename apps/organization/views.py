@@ -3,9 +3,11 @@
 from django.shortcuts import render
 from django.views.generic.base import View
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponse
 
 from .models import CourseOrg, CityDict
 from .forms import UserAskForm
+from courses.models import Course
 
 
 class OrgView(View):
@@ -45,7 +47,6 @@ class OrgView(View):
         elif sort == 'courses':
             all_orgs = all_orgs.order_by("-course_nums")
 
-
         p = Paginator(all_orgs, 5, request=request)
 
         orgs = p.page(page)
@@ -67,9 +68,87 @@ class AddUserAskView(View):
     """
     用户咨询
     """
+
     def post(self, request):
         userask_form = UserAskForm(request.POST)
         if userask_form.is_valid():
+            # ModelForm 可以直接保存进数据库，一定要带参数 commit=True
             user_ask = userask_form.save(commit=True)
+            return HttpResponse('{"status":"success"}', content_type='application/json')
+        else:
+            return HttpResponse('{"status":"fail","msg":"添加出错"}', content_type='application/json')
+
+
+class OrgHomeView(View):
+    """
+    机构首页
+    """
+    def get(self, request, org_id):
+        # 为了让页面知道当前是哪个分页
+        current_page = "home"
+
+        course_org = CourseOrg.objects.get(id=int(org_id))
+        all_courses = course_org.course_set.all()[:3]
+        all_teachers = course_org.teacher_set.all()[:1]
+
+        return render(request, 'org-detail-homepage.html', {
+            'all_courses': all_courses,
+            'all_teachers': all_teachers,
+            'course_org': course_org,
+            'current_page': current_page
+        })
+
+
+class OrgCourseView(View):
+    """
+    机构课程列表页
+    """
+    def get(self, request, org_id):
+        # 为了让页面知道当前是哪个分页
+        current_page = "course"
+
+        course_org = CourseOrg.objects.get(id=int(org_id))
+        all_courses = course_org.course_set.all()
+
+        return render(request, 'org-detail-course.html', {
+            'all_courses': all_courses,
+            'course_org': course_org,
+            'current_page': current_page
+        })
+
+
+class OrgDescView(View):
+    """
+    机构介绍
+    """
+    def get(self, request, org_id):
+        # 为了让页面知道当前是哪个分页
+        current_page = "desc"
+
+        course_org = CourseOrg.objects.get(id=int(org_id))
+
+        return render(request, 'org-detail-desc.html', {
+            'course_org': course_org,
+            'current_page': current_page
+        })
+
+
+class OrgTeacherView(View):
+    """
+    机构讲师页
+    """
+    def get(self, request, org_id):
+        # 为了让页面知道当前是哪个分页
+        current_page = "teacher"
+
+        course_org = CourseOrg.objects.get(id=int(org_id))
+        all_teachers = course_org.teacher_set.all()
+
+        return render(request, 'org-detail-teachers.html', {
+            'all_teachers': all_teachers,
+            'course_org': course_org,
+            'current_page': current_page
+        })
+
 
 
