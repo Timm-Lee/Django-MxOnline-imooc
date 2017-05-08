@@ -1,14 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block title %}公开课视频信息 - 慕学在线网{% endblock %}
-{% block custom_css %}
-    <link rel="stylesheet" href="{% static 'css/muke/course/learn-less.css' %}"/>
-    <link rel="stylesheet" href="{% static 'css/muke/course/course-comment.css' %}"/>
-    <link rel="stylesheet" href="{% static 'css/muke/base.css' %}">
-    <link rel="stylesheet" href="{% static 'css/muke/common-less.css' %}">
-    <link rel="stylesheet" href="{% static 'css/muke/course/common-less.css' %}">
-{% endblock %}
-
 {% block custom_bread %}
     <section>
         <div class="wp">
@@ -20,6 +12,14 @@
             </ul>
         </div>
     </section>
+{% endblock %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'css/muke/course/learn-less.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/muke/course/course-comment.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/muke/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/muke/common-less.css' %}">
+    <link rel="stylesheet" href="{% static 'css/muke/course/common-less.css' %}">
 {% endblock %}
 
 {% block custom_content %}
@@ -57,9 +57,11 @@
             <div class="content">
                 <div class="mod-tab-menu">
                     <ul class="course-menu clearfix">
-                        <li><a class="ui-tabs-active active" id="learnOn" href="course-video.html"><span>章节</span></a>
+                        <li><a class="active" id="learnOn"
+                               href="{% url 'course:course_info' course.id %}"><span>章节</span></a>
                         </li>
-                        <li><a id="commentOn" class="" href="course-comment.html"><span>评论</span></a></li>
+                        <li><a  class="ui-tabs-active " id="commentOn" href="{% url 'course:course_comments' course.id %}"><span>评论</span></a>
+                        </li>
                     </ul>
                 </div>
                 <div id="notice" class="clearfix">
@@ -73,12 +75,14 @@
                                 <strong><i class="state-expand"></i>{{ lesson.name }}</strong>
                             </h3>
                             <ul class="video">
-                            {% for video in lesson.get_lesson_video %}
-                                <li>
-                                    <a target="_blank" href='{{ MEDIA_URL }}{{ video.url }}' class="J-media-item studyvideo">{{ video.name }}({{ video.learn_times }})<i class="study-state"></i>
-                                    </a>
-                                </li>
-                            {% endfor %}
+                                {% for video in lesson.get_lesson_video %}
+                                    <li>
+                                        <a target="_blank" href='{{ MEDIA_URL }}{{ video.url }}'
+                                           class="J-media-item studyvideo">{{ video.name }}({{ video.learn_times }})<i
+                                                class="study-state"></i>
+                                        </a>
+                                    </li>
+                                {% endfor %}
                             </ul>
                         </div>
                     {% endfor %}
@@ -91,13 +95,15 @@
                     <div class="box mb40">
                         <h4>资料下载</h4>
                         <ul class="downlist">
-                        {% for course_resourse in course_resources %}
-                            <li>
-                                <span><i class="aui-iconfont aui-icon-file"></i>&nbsp;&nbsp;{{ course_resourse.name }}</span>
-                                <a href="{{ MEDIA_URL }}{{ course_resourse.download }}" class="downcode" target="_blank"
-                                   download="" data-id="274" title="">下载</a>
-                            </li>
-                        {% endfor %}
+                            {% for course_resourse in course_resources %}
+                                <li>
+                                    <span><i
+                                            class="aui-iconfont aui-icon-file"></i>&nbsp;&nbsp;{{ course_resourse.name }}</span>
+                                    <a href="{{ MEDIA_URL }}{{ course_resourse.download }}" class="downcode"
+                                       target="_blank"
+                                       download="" data-id="274" title="">下载</a>
+                                </li>
+                            {% endfor %}
                         </ul>
                     </div>
                     <div class="box mb40">
