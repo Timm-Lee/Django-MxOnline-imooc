@@ -34,18 +34,18 @@ class OrgView(View):
         if category:
             all_orgs = all_orgs.filter(category=category)
 
-        # 分页
-        try:
-            page = request.GET.get('page', 1)
-        except PageNotAnInteger:
-            page = 1
-
         # 排序
         sort = request.GET.get('sort', '')
         if sort == 'students':
             all_orgs = all_orgs.order_by("-students")
         elif sort == 'courses':
             all_orgs = all_orgs.order_by("-course_nums")
+
+        # 分页
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
 
         p = Paginator(all_orgs, 5, request=request)
 
