@@ -31,6 +31,17 @@ class Course(models.Model):
         verbose_name = '课程'
         verbose_name_plural = verbose_name
 
+    # 章节外键指向 Course，因此可以反向去取章节
+    def get_lesson_nums(self):
+        """
+        获取课程章节数
+        """
+        all_lessons = self.lesson_set.all()
+        return all_lessons.count()
+
+    # 获取学习该课程的用户，用外键反向获取
+    def get_learn_users(self):
+        return self.usercourse_set.all()[:5]
 
     def __str__(self):
         return self.name
