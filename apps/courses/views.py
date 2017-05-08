@@ -4,8 +4,9 @@ from django.views.generic.base import View
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 
-from .models import Course, CourseResource
+from .models import Course, CourseResource, Video
 from operation.models import UserFavorite, CourseComments, UserCourse
+from utils.mixin_utils import LoginRequiredMixin
 
 
 class CourseListView(View):
@@ -81,33 +82,43 @@ class CourseDetailView(View):
         })
 
 
-class CourseInfoView(View):
+class CourseInfoView(LoginRequiredMixin, View):
     """
     课程章节信息
     """
 
     def get(self, request, course_id):
-            # 获取 url 参数确定课程
+        # 获取 url 参数确定课程
         course = Course.objects.get(id=int(course_id))
 
-            # 解决问题：学过这门课程的用户，还学过其他什么课程
-            # UserCourse 根据课程的 id 筛选出所有的记录。
-            # 通过这个记录可以得到所有学过这门的 user
-        user_courses = UserCourse.objects.filter(course=course)
+        # 查询用户是否已经关联了该课程
+        user_courses = UserCourse.objects.filter(user=request.user, course=course)
+        # 如果没有关联，则关联
+        if not user_courses:
+            user_courses = UserCourse(user=request.user, course=course)
+            user_courses.save()
 
-            # 获得了所有学过这门课的 user 的 id
+        """
+        解决问题：学过这门课程的用户，还学过其他什么课程
+        UserCourse 根据课程的 id 筛选出所有的记录。
+        通过这个记录可以得到所有学过这门的 user
+        获得了所有学过这门课的 user 的 id
+        """
+        user_courses = UserCourse.objects.filter(course=course)
         user_ids = [user_course.user.id for user_course in user_courses]
 
-            # 要了解学过这门课的学生，还学过什么课程
-            # 还是回到 UserCourse 表，用刚才获得的用户 id 去获取所有的课程
-            # user_id （user 外键，取 id 用 user_id
-            # user_id__in （双下划线）表示去查找数组中的内容
+        """
+        要了解学过这门课的学生，还学过什么课程
+        还是回到 UserCourse 表，用刚才获得的用户 id 去获取所有的课程
+        user_id （user 外键，取 id 用 user_id
+        user_id__in （双下划线）表示去查找数组中的内容
+        """
         all_user_courses = UserCourse.objects.filter(user_id__in=user_ids)
 
-            # 取出所有课程 id
+        # 取出所有课程 id
         course_ids = [user_course.course.id for user_course in all_user_courses]
 
-            # 查询学过这门的课用户们，还学过什么课
+        # 查询学过这门的课用户们，总共学过些课
         relate_courses = Course.objects.filter(id__in=course_ids).order_by("-click_nums")[:5]
 
         course_resources = CourseResource.objects.filter(course=course)
@@ -119,7 +130,7 @@ class CourseInfoView(View):
         })
 
 
-class ComentsView(View):
+class ComentsView(LoginRequiredMixin, View):
     """
     显示课程评论
     """
@@ -159,6 +170,38 @@ class AddCommentsView(View):
             return HttpResponse('{"status":"fail", "msg":"添加失败"}', 'application/json')
 
 
+class VideoPlayView(View):
+    """
+    课程视频播放：
+    一部分与 CourseInfoView 类一样
+    """
+
+    def get(self, request, video_id):
+        video = Video.objects.get(id=int(video_id))
+        course = video.lesson.course
+
+        user_courses = UserCourse.objects.filter(user=request.user, course=course)
+        if not user_courses:
+            user_courses = UserCourse(user=request.user, course=course)
+            user_courses.save()
+
+        user_courses = UserCourse.objects.filter(course=course)
+        user_ids = [user_course.user.id for user_course in user_courses]
+
+        all_user_courses = UserCourse.objects.filter(user_id__in=user_ids)
+
+        course_ids = [user_course.course.id for user_course in all_user_courses]
+
+        relate_courses = Course.objects.filter(id__in=course_ids).order_by("-click_nums")[:5]
+
+        course_resources = CourseResource.objects.filter(course=course)
+
+        return render(request, "course-play.html", {
+            'video': video,
+            'course': course,
+            'course_resources': course_resources,
+            'relate_courses': relate_courses,
+        })
 
 
 

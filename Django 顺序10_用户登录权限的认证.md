@@ -1,59 +1,73 @@
-# Django 顺序9_显示choices值、外键反向获 model
+# Django 顺序10_用户登录权限的认证
 
 
 
-## 显示字段的 choices 值
-
-在模板中使用 `{{ course.get_degree_display }}` ，可以把 course 中的 degree 的 choices 的值显示出来。
-
-```html
-<span class="fl">难度：<i class="key">{{ course.get_degree_display }}</i></span>
-```
+目的：对用户的是否登录进行认证。只有登录的用户才能进行某些操作，比如评论与开始学习。
 
 
 
-## model 中定义新方法，外键反向获取 model
-
-如果一个 model 有外键指向他，就可以用 `<使用外键的model>_set` 来反向获取使用了外键的 model。另外，获取到了 model 以后，可以定义新的方法，把业务处理的内容返回出去。
-
-### 示例1：统计章节数
-
-courses.models.py 中的 Course 并不带章节。但是章节外键指向 Course，因此可以反向去取章节。
+如果 views 是一个函数，可以使用装饰器
 
 ```python
-class Course(models.Model):
+@login_required
+def AnyView(request):
     #...
-    def get_lesson_nums(self):
-        all_lessons = self.lesson_set.all()
-        return all_lessons.count()
 ```
 
-在逻辑把 course 传递到模板以后，可以直接在模板中调用 `get_lesson_nums` 方法。
 
-```html
-<li><span class="pram word3">章&nbsp;节&nbsp;数：</span><span>{{ course.get_lesson_nums }}</span></li>
-```
 
-### 示例2：获取学习该课程的用户
-
-同样在 courses.models.py 中定义新方法。切片只取5个。
+如果是一个类，需要继承基础类。这个基础类是自己写的，放在 apps.utils.mixin_utils.py 中
 
 ```python
-class Course(models.Model):
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
+class LoginRequiredMixin(object):
+    @method_decorator(login_required(login_url='/login/'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
+```
+
+
+
+`dispatch` 函数，必须用这个名词，而且后面的参数也要如此。
+
+Django 装饰器，如果用户未登录状态，就会自动跳转到 `/login/`。这里做了登录与否的认证。
+
+```python
+@method_decorator(login_required(login_url='/login/'))
+```
+
+
+
+Mixin 结尾的函数或者类代表了基础的函数或者类。
+
+在courses.views.py中引入，让评论逻辑的类同时继承该认证类与 View 类，且认证类必须在前。
+
+表示必须登录，才能用这两个 views 逻辑进行处理，否则跳转到登录页面。
+
+```python
+from utils.mixin_utils import LoginRequiredMixin
+
+
+class ComentsView(LoginRequiredMixin, View):
     #...
-    def get_learn_users(self):
-        return self.usercourse_set.all()[:5]
+    
+class CourseInfoView(LoginRequiredMixin, View):
+    #...
 ```
 
-模板中的调用，首先得到的是 UserCourse，然后再用外键 user 去获取用户的头像。
 
-```html
-{% for user_course in course.get_learn_users %}
-<span class="pic">
-  <img width="40" height="40" src="{{ MEDIA_URL }}{{ user_course.user.image }}"/>
-</span>
-{% endfor %}
-```
+
+自此，保证了学习与评论逻辑中，可以取出对应的登录用户。
+
+
+
+
+
+
+
+
 
 
 
