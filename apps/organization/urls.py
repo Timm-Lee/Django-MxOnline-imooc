@@ -3,13 +3,13 @@ __author__ = 'TimLee'
 __date__ = '5/7/17 4:56 PM'
 
 from django.conf.urls import url
-from .views import OrgView, AddUserAskView, OrgHomeView, OrgCourseView, OrgDescView, OrgTeacherView
+from .views import OrgView, AddUserAskView, OrgHomeView, OrgCourseView, OrgDescView, OrgTeacherView, AddFavView
 
 urlpatterns = [
     # 课程机构列表页
     url(r'list/$', OrgView.as_view(), name="org_list"),
 
-    # 用户询问课程
+    # 用户询问课程（Ajax）
     url(r'add_ask/$', AddUserAskView.as_view(), name="add_ask"),
 
     # 机构详情首页
@@ -23,4 +23,8 @@ urlpatterns = [
 
     # 机构讲师
     url(r'teacher/(?P<org_id>\d+)/$', OrgTeacherView.as_view(), name="org_teacher"),
+
+    # 机构收藏功能（Ajax）
+    url(r'add_fav/$', AddFavView.as_view(), name="add_fav"),
+
 ]
