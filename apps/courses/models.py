@@ -22,10 +22,10 @@ class Course(models.Model):
     click_nums = models.IntegerField(default=0, verbose_name='点击数')
     is_banner = models.BooleanField(default=False, verbose_name=u'是否是轮播图')
     category = models.CharField(default='后端', max_length=20, verbose_name='课程类别')
-    tag = models.CharField(default='', verbose_name='课程标签', max_length=10)
     youneed_konw = models.CharField(default='', max_length=300, verbose_name='课前须知')
     teacher_tell = models.CharField(default='', max_length=300, verbose_name='老师告诉你能学什么')
     add_time = models.DateTimeField(default=datetime.now, verbose_name='添加时间')
+    tag = models.CharField(default='', verbose_name='课程标签', max_length=10)
 
     class Meta:
         verbose_name = '课程'
