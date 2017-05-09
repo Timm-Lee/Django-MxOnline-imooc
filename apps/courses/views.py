@@ -15,6 +15,7 @@ class CourseListView(View):
     """
 
     def get(self, request):
+
         all_courses = Course.objects.all().order_by("-add_time")
 
         hot_courses = Course.objects.all().order_by("-click_nums")[:3]
@@ -41,7 +42,7 @@ class CourseListView(View):
         return render(request, "course-list.html", {
             'all_courses': courses,
             "sort": sort,
-            'hot_courses': hot_courses
+            'hot_courses': hot_courses,
         })
 
 
@@ -78,7 +79,7 @@ class CourseDetailView(View):
             'course': course,
             'relate_courses': relate_courses,
             'has_fav_course': has_fav_course,
-            'has_fav_org': has_fav_org
+            'has_fav_org': has_fav_org,
         })
 
 

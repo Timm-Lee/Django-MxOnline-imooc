@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^desc/(?P<org_id>\d+)/$', OrgDescView.as_view(), name="org_desc"),
 
     # 机构讲师
-    url(r'^teacher/(?P<org_id>\d+)/$', OrgTeacherView.as_view(), name="org_teacher"),
+    url(r'^org_teacher/(?P<org_id>\d+)/$', OrgTeacherView.as_view(), name="org_teacher"),
 
     # 机构收藏功能（Ajax）
     url(r'^add_fav/$', AddFavView.as_view(), name="add_fav"),

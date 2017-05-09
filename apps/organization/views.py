@@ -61,7 +61,7 @@ class OrgView(View):
             "city_id": city_id,
             "category": category,
             "hot_orgs": hot_orgs,
-            "sort": sort
+            "sort": sort,
         })
 
 
@@ -245,7 +245,7 @@ class TeacherListView(View):
         return render(request, "teachers-list.html", {
             'all_teachers': teachers,
             'sorted_teacher': sorted_teacher,
-            'sort': sort
+            'sort': sort,
         })
 
 
@@ -269,8 +269,6 @@ class TeacherDetailView(View):
 
         # 讲师排行
         sorted_teacher = Teacher.objects.order_by("-click_nums")[:3]
-
-
 
         return render(request, "teacher-detail.html", {
             'teacher': teacher,
