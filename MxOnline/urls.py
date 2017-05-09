@@ -47,5 +47,7 @@ urlpatterns = [
     # 课程相关 url 配置
     url(r'^course/', include('courses.urls', namespace="course")),
 
+    # 用户个人中心，放在 users app下
+    url(r'^users/', include('users.urls', namespace='users'))
 
 ]

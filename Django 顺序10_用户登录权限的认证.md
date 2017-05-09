@@ -6,6 +6,8 @@
 
 
 
+## 函数的登录认证
+
 如果 views 是一个函数，可以使用装饰器
 
 ```python
@@ -15,6 +17,8 @@ def AnyView(request):
 ```
 
 
+
+## 自定义类的登录认证
 
 如果是一个类，需要继承基础类。这个基础类是自己写的，放在 apps.utils.mixin_utils.py 中
 
@@ -28,8 +32,6 @@ class LoginRequiredMixin(object):
         return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 ```
 
-
-
 `dispatch` 函数，必须用这个名词，而且后面的参数也要如此。
 
 Django 装饰器，如果用户未登录状态，就会自动跳转到 `/login/`。这里做了登录与否的认证。
@@ -38,9 +40,11 @@ Django 装饰器，如果用户未登录状态，就会自动跳转到 `/login/`
 @method_decorator(login_required(login_url='/login/'))
 ```
 
-
-
 Mixin 结尾的函数或者类代表了基础的函数或者类。
+
+
+
+## 使用类的登录认证
 
 在courses.views.py中引入，让评论逻辑的类同时继承该认证类与 View 类，且认证类必须在前。
 
