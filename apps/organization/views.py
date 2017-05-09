@@ -5,7 +5,7 @@ from django.views.generic.base import View
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 
-from .models import CourseOrg, CityDict
+from .models import CourseOrg, CityDict, Teacher
 from .forms import UserAskForm
 from operation.models import UserFavorite
 
@@ -83,6 +83,7 @@ class OrgHomeView(View):
     """
     机构首页
     """
+
     def get(self, request, org_id):
         # 为了让页面知道当前是哪个分页
         current_page = "home"
@@ -112,6 +113,7 @@ class OrgCourseView(View):
     """
     机构课程列表页
     """
+
     def get(self, request, org_id):
         # 为了让页面知道当前是哪个分页
         current_page = "course"
@@ -136,6 +138,7 @@ class OrgDescView(View):
     """
     机构介绍
     """
+
     def get(self, request, org_id):
         # 为了让页面知道当前是哪个分页
         current_page = "desc"
@@ -158,6 +161,7 @@ class OrgTeacherView(View):
     """
     机构讲师页
     """
+
     def get(self, request, org_id):
         # 为了让页面知道当前是哪个分页
         current_page = "teacher"
@@ -182,6 +186,7 @@ class AddFavView(View):
     """
     用户收藏/用户取消收藏
     """
+
     def post(self, request):
         # 接收 Ajax 传递的参数
         # fav_id 与 fav_type 没取到，则用 0 为默认值，为了防止 int(fav_id) 抛异常。
@@ -191,7 +196,6 @@ class AddFavView(View):
         # 判断用户登录状态
         if not request.user.is_authenticated():
             return HttpResponse('{"status":"fail","msg":"用户未登录"}', content_type='application/json')
-
 
         # 查询是否存在收藏记录
         exist_records = UserFavorite.objects.filter(user=request.user, fav_id=int(fav_id), fav_type=int(fav_type))
@@ -212,9 +216,33 @@ class AddFavView(View):
                 return HttpResponse('{"status":"fail","msg":"收藏出错"}', content_type='application/json')
 
 
+class TeacherListView(View):
+    """
+    课程讲师列表页
+    """
 
+    def get(self, request):
+        all_teachers = Teacher.objects.all()
 
+        # 排序
+        sort = request.GET.get("sort", "")
+        if sort == "hot":
+            all_teachers = all_teachers.order_by("-click_nums")
 
+        sorted_teacher = Teacher.objects.order_by("-click_nums")[:3]
 
+        # 对讲师分页
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
 
+        p = Paginator(all_teachers, 1, request=request)
 
+        teachers = p.page(page)
+
+        return render(request, "teachers-list.html", {
+            'all_teachers': teachers,
+            'sorted_teacher': sorted_teacher,
+            'sort': sort
+        })
