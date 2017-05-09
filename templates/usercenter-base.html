@@ -143,7 +143,7 @@
                                     <i class="error-tips"></i>
                                 </li>
                                 <li>生&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日：
-                                    <input type="text" id="birth_day" name="birday" value="2009年9月2日"
+                                    <input type="text" id="birth_day" name="birthday" value="2009年9月2日"
                                            readonly="readonly"/>
                                     <i class="error-tips"></i>
                                 </li>
@@ -170,6 +170,7 @@
                                     <input type="button" id="jsEditUserBtn" value="保存">
                                 </li>
                             </ul>
+                            {% csrf_token %}
                         </form>
                     </div>
                 </div>
