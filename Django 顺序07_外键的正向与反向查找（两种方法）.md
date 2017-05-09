@@ -1,4 +1,4 @@
-# Django 顺序7_外键的正向与反向查找
+# Django 顺序7_外键的正向与反向查找（两种方法）
 
 
 
@@ -29,9 +29,13 @@ class OrgView(View):
 
 
 
-## 通过外键，查找关联该外键的数据 外键.查询表_set
+## 通过外键，查找关联该外键的数据 
+
+### 方法1：外键.查询表_set
 
 organisation.views.py
+
+course 以及 teacher 的外键都是 course_org。因此可以从 course_org 来查找谁外键（关联）了自己，类似于`course_org.course_set` 或者 `course_org.teacher_set`。
 
 ```python
 class OrgHomeVie(View):
@@ -45,4 +49,21 @@ class OrgHomeVie(View):
         all_courses = course_org.course_set.all()
         all_teachers = course_org.teacher_set.all()
 ```
+
+
+
+### 方法2：去外键的表中filter
+
+首先， Teacher（model）被 Course （model）外键了（或者说关联了）。那么先用 `.objects.get()` 得到一个确定的 teacher。把该 teacher 放在 `Course.objects.filter`。直接把 teacher 作为参数放入筛选。
+
+```python
+class TeacherDetailView(View):
+    def get(self, request, teacher_id):
+        teacher = Teacher.objects.get(id=int(teacher_id))
+        teacher.click_nums += 1
+        teacher.save()
+        all_courses = Course.objects.filter(teacher=teacher)
+```
+
+
 

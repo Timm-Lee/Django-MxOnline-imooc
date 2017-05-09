@@ -1,11 +1,13 @@
 # Django 顺序1：数据库, apps, models, xadmin
 
-本节：
+## 本节的计划：
 
 * 建立数据连接
 * 搭建 apps 结构
 * 建立 models
 * 实现 xadmin 后台
+
+
 
 
 
