@@ -3,7 +3,7 @@
 from django.conf.urls import url, include
 from django.views.generic import TemplateView
 from django.views.static import serve
-from MxOnline.settings import MEDIA_ROOT, STATIC_ROOT
+from MxOnline.settings import MEDIA_ROOT
 
 import xadmin
 
@@ -15,7 +15,7 @@ urlpatterns = [
     url(r'^media/(?P<path>.*)', serve, {"document_root": MEDIA_ROOT}),
 
     # 处理 static 的处理
-    url(r'^static/(?P<path>.*)', serve, {"document_root": STATIC_ROOT}),
+    # url(r'^static/(?P<path>.*)', serve, {"document_root": STATIC_ROOT}),
 
     # xadmin 后台管理页面
     url(r'^xadmin/', xadmin.site.urls),
