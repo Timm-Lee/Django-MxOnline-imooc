@@ -427,6 +427,22 @@ class LoginView(View):
 
 
 
+### 完善：登陆后跳转
+
+用户登陆成功后，最后完善为跳转，走 get index 路线。这样 index 页面就会传入动态的数据。
+
+```python
+class LoginView(View):
+    def post(self, request):
+        login_form = LoginForm(request.POST)
+        if login_form.is_valid():
+            #...
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponseRedirect(reverse('index'))
+```
+
 
 
 

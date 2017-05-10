@@ -3,19 +3,25 @@
 from django.conf.urls import url, include
 from django.views.generic import TemplateView
 from django.views.static import serve
-from MxOnline.settings import MEDIA_ROOT
+from MxOnline.settings import MEDIA_ROOT, STATIC_ROOT
 
 import xadmin
 
-from users.views import LoginView, LogoutView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView
+from users.views import IndexView, LoginView, LogoutView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView
 
 
 urlpatterns = [
+    # 处理 media 的访问，用于图片获取
+    url(r'^media/(?P<path>.*)', serve, {"document_root": MEDIA_ROOT}),
+
+    # 处理 static 的处理
+    url(r'^static/(?P<path>.*)', serve, {"document_root": STATIC_ROOT}),
+
     # xadmin 后台管理页面
     url(r'^xadmin/', xadmin.site.urls),
 
     # 主页
-    url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
+    url(r'^$', IndexView.as_view(), name='index'),
 
     # 用户登录页面
     url(r'^login/$', LoginView.as_view(), name='login'),
@@ -41,9 +47,6 @@ urlpatterns = [
     # 点击找回密码链接
     url(r'^modify_pwd/$', ModifyPwdView.as_view(), name='modify_pwd'),
 
-    # 处理 media 信息，用于图片获取
-    url(r'^media/(?P<path>.*)', serve, {"document_root":MEDIA_ROOT}),
-
     # 课程机构 url 配置
     url(r'^org/', include('organization.urls', namespace="org")),
 
@@ -53,4 +56,10 @@ urlpatterns = [
     # 用户个人中心，放在 users app下
     url(r'^users/', include('users.urls', namespace='users'))
 
+
+
 ]
+
+#全局404页面配置
+handler404 = 'users.views.page_not_found'
+handler500 = 'users.views.page_error'
