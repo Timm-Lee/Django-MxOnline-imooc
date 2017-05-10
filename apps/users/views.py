@@ -2,13 +2,14 @@
 
 import json
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django.views.generic.base import View
 from django.contrib.auth.hashers import make_password
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse
 
 
 from .models import UserProfile, EmailVerifyRecord
@@ -20,8 +21,10 @@ from organization.models import CourseOrg, Teacher
 from courses.models import Course
 
 
-# 自定义 authenticate 实现邮箱登录
 class CustomBackend(ModelBackend):
+    """
+    自定义 authenticate 实现邮箱登录
+    """
     def authenticate(self, username=None, password=None, **kwargs):
         try:
             # 查找用户在 model 中是否存在，用 get 可以确保只有一个该用户
@@ -33,8 +36,10 @@ class CustomBackend(ModelBackend):
             return None
 
 
-# 登录逻辑，类方法
 class LoginView(View):
+    """
+    登录逻辑，类方法
+    """
     def get(self, request):
         return render(request, 'login.html', {})
 
@@ -56,8 +61,20 @@ class LoginView(View):
             return render(request, "login.html", {"login_form": login_form})
 
 
-# 用户注册
+class LogoutView(View):
+    """
+    用户退出（登出）
+    """
+    def get(self, request):
+        logout(request)
+        # 登出后重定向，另外直接使用页面的 name
+        return HttpResponseRedirect(reverse("index"))
+
+
 class RegisterView(View):
+    """
+    用户注册
+    """
     def get(self, request):
         register_form = RegisterForm()
         return render(request, "register.html", {"register_form": register_form})
@@ -90,8 +107,10 @@ class RegisterView(View):
             return render(request, "register.html", {"register_form": register_form})
 
 
-# 用户激活链接逻辑
 class ActiveUserView(View):
+    """
+    用户激活链接逻辑
+    """
     def get(self, request, active_code):
         all_records = EmailVerifyRecord.objects.filter(code=active_code)
         if all_records:
@@ -105,8 +124,10 @@ class ActiveUserView(View):
             return render(request, "active_fail.html")
 
 
-# 找回密码逻辑
 class ForgetPwdView(View):
+    """
+    找回密码逻辑
+    """
     def get(self, request):
         forget_form = ForgetForm()
         return render(request, "forgetpwd.html", {"forget_form": forget_form})
@@ -121,8 +142,10 @@ class ForgetPwdView(View):
             return render(request, "forgetpwd.html", {"forget_form": forget_form})
 
 
-# 用户点击找回密码链接
 class ResetView(View):
+    """
+    用户点击找回密码链接
+    """
     def get(self, request, active_code):
         all_records = EmailVerifyRecord.objects.filter(code=active_code)
         if all_records:

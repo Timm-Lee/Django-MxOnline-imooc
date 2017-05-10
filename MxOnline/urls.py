@@ -7,7 +7,7 @@ from MxOnline.settings import MEDIA_ROOT
 
 import xadmin
 
-from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView
+from users.views import LoginView, LogoutView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView
 
 
 urlpatterns = [
@@ -19,6 +19,9 @@ urlpatterns = [
 
     # 用户登录页面
     url(r'^login/$', LoginView.as_view(), name='login'),
+
+    # 用户退出页面
+    url(r'^logout/$', LogoutView.as_view(), name='logout'),
 
     # 用户注册
     url(r'^register/$', RegisterView.as_view(), name='register'),

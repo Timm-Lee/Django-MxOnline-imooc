@@ -29,6 +29,14 @@ class UserProfile(AbstractUser):
 
 ## html 中显示数量
 
+直接调用`{{ request.user.unread_nums }}`
+
+```html
+<div class="msg-num">
+  <span id="MsgNum">{{ request.user.unread_nums }}</span>
+</div>
+```
+
 
 
 
