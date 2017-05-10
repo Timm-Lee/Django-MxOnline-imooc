@@ -58,6 +58,7 @@ class EmailVerifyRecordAdmin():
     list_display = ['code', 'email', 'send_type', 'send_time']
     search_fields = ['code', 'email', 'send_type']
     list_filter = ['code', 'email', 'send_type', 'send_time']
+    model_icon = 'fa fa-address-book-o'
 
 
 class BannerAdmin():
