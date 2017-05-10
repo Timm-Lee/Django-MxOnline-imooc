@@ -20,7 +20,11 @@
     <header>
         <div class="header2 header">
 
-            {% if request.user.is_authenticated %}
+            <div class="top">
+                <div class="wp">
+                    <div class="fl"><p>服务电话：<b>33333333</b></p></div>
+                    <!--登录后跳转-->
+                    {% if request.user.is_authenticated %}
                         <div class="personal">
                             <dl class="user fr">
                                 <dd>{{ request.user.nick_name }}<img class="down fr"
@@ -37,7 +41,7 @@
                                 </dl>
                                 <div class="btn">
                                     <a class="personcenter fl" href="{% url 'users:user_info' %}">进入个人中心</a>
-                                    <a class="fr" href="/logout/">退出</a>
+                                    <a class="fr" href="#">退出</a>
                                 </div>
                             </div>
                         </div>
@@ -50,6 +54,9 @@
                         <a style="color:white" class="fr registerbtn" href="{% url 'register' %}">注册</a>
                         <a style="color:white" class="fr loginbtn" href="{% url 'login' %}">登录</a>
                     {% endif %}
+
+                </div>
+            </div>
 
 
             <div class="middle companyheader">
@@ -93,10 +100,14 @@
         <!-- 左边导航部分 -->
         <div class="left">
             <ul>
-                <li class="{% ifequal current_page 'home' %}active2{% endifequal %}"><a href="{% url 'org:org_home' course_org.id %}">机构首页</a></li>
-                <li class="{% ifequal current_page 'course' %}active2{% endifequal %}"><a href="{% url 'org:org_course' course_org.id %}">机构课程</a></li>
-                <li class="{% ifequal current_page 'desc' %}active2{% endifequal %}"><a href="{% url 'org:org_desc' course_org.id %}">机构介绍</a></li>
-                <li class="{% ifequal current_page 'teacher' %}active2{% endifequal %}"><a href="{% url 'org:org_teacher' course_org.id %}">机构讲师</a></li>
+                <li class="{% ifequal current_page 'home' %}active2{% endifequal %}"><a
+                        href="{% url 'org:org_home' course_org.id %}">机构首页</a></li>
+                <li class="{% ifequal current_page 'course' %}active2{% endifequal %}"><a
+                        href="{% url 'org:org_course' course_org.id %}">机构课程</a></li>
+                <li class="{% ifequal current_page 'desc' %}active2{% endifequal %}"><a
+                        href="{% url 'org:org_desc' course_org.id %}">机构介绍</a></li>
+                <li class="{% ifequal current_page 'teacher' %}active2{% endifequal %}"><a
+                        href="{% url 'org:org_teacher' course_org.id %}">机构讲师</a></li>
             </ul>
         </div>
         <!-- 左边导航部分：结束 -->
