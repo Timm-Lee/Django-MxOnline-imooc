@@ -39,7 +39,44 @@ class UserProfile(AbstractUser):
 
 
 
+## 消息已读设置
 
+### 1、未读消息记录的清空
+
+在“我的消息”逻辑中，把所有的未读消息提取出来。用户进入消息中心就清空所有未读消息的记录。
+
+apps/users/urls.py 
+
+```python
+class MymessageView(LoginRequiredMixin, View):
+    """
+    我的消息
+    """
+    def get(self, request):
+        all_message = UserMessage.objects.filter(user=request.user.id)
+        all_unread_messages = UserMessage.objects.filter(user=request.user.id, has_read=False)
+
+        # 用户进入个人消息后，清空未读消息的记录
+        for unread_message in all_unread_messages:
+            unread_message.has_read = True
+            unread_message.save()
+
+```
+
+
+
+### 2、未读消息数量的提取
+
+在过滤条件中增加 `has_read=False`。
+
+```python
+class UserProfile(AbstractUser):
+    #...
+    def unread_nums(self):
+        # 获取用户未读消息数量
+        from operation.models import UserMessage
+        return UserMessage.objects.filter(user=self.id, has_read=False).count()
+```
 
 
 

@@ -99,6 +99,8 @@ class CourseInfoView(LoginRequiredMixin, View):
     def get(self, request, course_id):
         # 获取 url 参数确定课程
         course = Course.objects.get(id=int(course_id))
+        course.students += 1
+        course.save()
 
         # 查询用户是否已经关联了该课程
         user_courses = UserCourse.objects.filter(user=request.user, course=course)
