@@ -39,6 +39,14 @@ class Course(models.Model):
         all_lessons = self.lesson_set.all()
         return all_lessons.count()
 
+    get_lesson_nums.short_description = "章节数"
+
+    def go_to(self):
+        from django.utils.safestring import mark_safe
+        return mark_safe("<a href='http://www.projectsedu.com'>跳转</a>")
+
+    go_to.short_description = "章节数"
+
     # 获取学习该课程的用户，用外键反向获取
     def get_learn_users(self):
         return self.usercourse_set.all()[:5]
@@ -96,6 +104,16 @@ class CourseResource(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# class BannerCourse(Course):
+#     """
+#     专门显示 banner course
+#     """
+#     class Meta:
+#         verbose_name = "轮播课程"
+#         verbose_name_plural = verbose_name
+#         proxy = True
 
 
 
