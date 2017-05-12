@@ -54,7 +54,10 @@ urlpatterns = [
     url(r'^course/', include('courses.urls', namespace="course")),
 
     # 用户个人中心，放在 users app下
-    url(r'^users/', include('users.urls', namespace='users'))
+    url(r'^users/', include('users.urls', namespace='users')),
+
+    # 富文本 Ueditor 相关 url
+    # url(r'^ueditor/',include('DjangoUeditor.urls' )),
 
 
 

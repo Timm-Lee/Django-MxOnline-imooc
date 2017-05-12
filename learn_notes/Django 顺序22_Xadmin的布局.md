@@ -176,6 +176,23 @@ class CourseAdmin(object):
 
 
 
+## 保存之前实现功能
+
+```python
+
+class CourseAdmin(object):
+    #...
+
+    def save_models(self):
+        # 在保存课程的时候统计课程机构的课程数
+        obj = self.new_obj
+        obj.save()
+        if obj.course_org is not None:
+            course_org = obj.course_org
+            course_org.course_nums = Course.objects.filter(course_org=course_org).count()
+            course_org.save()
+```
+
 
 
 
